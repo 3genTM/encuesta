@@ -15,9 +15,14 @@ header {
   min-height: 50px;
   padding: 5px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   background: #bc370f;
   color: white;
+}
+
+#addQuestion {
+  width: 200px;
 }
 
 form {
@@ -31,7 +36,7 @@ form {
   width: 24%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin: 10px auto;
   border: 2px solid #bc370f;
   border-radius: 12px;
@@ -46,7 +51,7 @@ label {
   margin: 10px 0;
 }
 
-button {
+.vote {
   display: block;
   position: relative;
   float: left;
@@ -88,10 +93,54 @@ button {
 
 .result {
   background-color: #9dc8bf;
-  border-radius: 12px;  
+  border-radius: 12px;
 }
 
 .title {
+  font-weight: bold;
+  text-align: center;
+}
+
+.newQuestion {
+  width: 30%;
+  margin: 20px auto;
+  padding: 2%;
+  border: 4px solid green;
+  border-radius: 12px;
+  background-color: white;
+}
+
+.adding {
+  display: block;
+  width: 100%;
+  height: 30px;
+  margin: 5px auto;
+  border-radius: 8px;
+}
+
+#addQuestion, #addAnswer, #sendNewQuestion, #back {
+  padding: 0 1%;
+  margin: 10px 20px 10px 0;
+  font-weight: 600;
+  text-align: center;
+  line-height: 50px;
+  color: #FFF;
+  background: #eb8668;
+  border-radius: 10px;
+  transition: all 0.2s;
+  align-self: center;
+}
+
+#sendNewQuestion, #back {
+  width: 150px;
+  background: red;
+}
+
+#sendNewQuestion {
+  background: green;
+}
+
+.success {
   font-weight: bold;
   text-align: center;
 }

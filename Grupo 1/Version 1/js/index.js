@@ -57,7 +57,7 @@ $( document ).ready(function() {
   }
 });
 
-$(document).on('click', 'button',function(event){
+$(document).on('click', '.vote',function(event){
  event.preventDefault();
 
  let options = $(this).siblings('.optionContainer');
@@ -85,7 +85,75 @@ function showRanking(question, winners) {
   let message = `<p class="title"> MÁS VOTADAS:</p>`;
   $('#results' + question).html(message);
   $.each(winners, function(index, item) {
-    let winner = `<p>* ${item.answer}. Votos: ${item.votes}</p>`;
+    let winner = `<p><span class="bold">Rta:</span> ${item.answer}. <span class="bold">Votos:</span> ${item.votes}</p>`;
     $('#results' + question).append(winner);
   })
 }
+
+$('#addQuestion').on('click', function(event) {
+  event.preventDefault();
+  $('.colBox').hide();
+  let box = `<div class='newQuestion'>
+              <h3>PASO 1: AGREGUE LA PREGUNTA</h3>
+              <input id='newQuestion' class='adding' type='text' name='enunciado' placeholder='Ingrese el enunciado de su pregunta'>
+              <h3>PASO 2: AGREGUE RESPUESTAS</h3>
+              <div id='answerBox'>
+                <input class='adding answers' type='text' name='respuesta' placeholder='Ingrese opción de respuesta'>
+                <input class='adding answers' type='text' name='respuesta' placeholder='Ingrese opción de respuesta'>
+              </div>
+              <button id='addAnswer'> AGREGAR OTRA</button>
+              <h3>PASO 3: LISTO!</h3>
+              <button id='sendNewQuestion'> CARGAR </button> <button id='back'>VOLVER</button>
+
+            </div>`;
+  $('.container').append(box);
+});
+
+$(document).on('click', '#addAnswer',function(event){
+  event.preventDefault();
+  let newAnswer = `<input class='adding answers' type='text' name='respuesta' placeholder='Ingrese opción de respuesta'>`;
+  $('#answerBox').append(newAnswer);
+});
+
+$(document).on('click', '#sendNewQuestion',function(event){
+  event.preventDefault();
+  let questionText = $('#newQuestion').val();
+  let answersArray = [];
+  $('.answers').each(function(index, item) {
+    answersArray.push($(this).val());
+  })
+  let newQA = {
+    enunciado: questionText,
+    respuestas: answersArray
+  }
+  console.log(newQA)
+
+  if (questionText != "" && answersArray.length != 0 ) {
+    //Send to api
+    $.ajax({
+        type: 'POST',
+        url: "http://www.mariabelenalegre.com/api-encuenta/api.php",
+        dataType: 'json',
+        data: JSON.stringify(newQA),
+        success: function (result) {
+                 console.log(result);
+        },
+        error: function (result) {
+            alert("No pudo resolver");
+        }
+     });
+
+     $('.newQuestion').empty();
+     let success = `<p class="success">Gracias! Su pregunta fue enviada</p>
+                    <button id='back'>VOLVER</button>`
+    $('.newQuestion').append(success);
+  } else {
+    console.log("No ingresó nada o le falta llenar campos!")
+  }
+});
+
+$(document).on('click', '#back',function(event){
+  event.preventDefault();
+  $('.colBox').show();
+  $('.newQuestion').hide();
+});
