@@ -1,3 +1,8 @@
+
+// $(function(){...}) is a shortcut for
+// $(document).ready(function(){...});
+
+
 var data;
 var savedVotes = localStorage.getItem("votes");
 var answerCounter = savedVotes ? JSON.parse(savedVotes) : {};
@@ -28,7 +33,8 @@ $( document ).ready(function() {
       $('#' + i).append(optionContainer);
 
       for (j = 0; j < data[i].respuestas.length; j++) {
-        let option = `<label><input class="radio" type="radio" name="options${i}">${data[i].respuestas[j]}</label>`
+        let option = `<label><input class="radio" type="radio" name="options${i}">${data[i].respuestas[j]}</label>
+        <div class="progressContainer"><div class="progress"></div><div class="progress-label"></div></div>`
         $('#optionContainer' + i).append(option);
       }
 
@@ -57,7 +63,7 @@ $( document ).ready(function() {
   }
 });
 
-$(document).on('click', '.vote',function(event){
+$(document).on('click', '.vote', function(event) {
  event.preventDefault();
 
  let options = $(this).siblings('.optionContainer');
@@ -67,28 +73,37 @@ $(document).on('click', '.vote',function(event){
 
  // If something is  checked, call addVote()
  if (options.find('label input:checked').length) {
+   let progressBars = options.parent().find('.progress');
+   let progressLabels = options.parent().find('.progress-label');
+
    addVote(questionText, answerText);
    const mostVoted = data[questionId].respuestas
     .map(answer => ({answer: answer, votes: getVote(questionText, answer)})) // Syntactic Sugar
     .sort((a, b) => b.votes - a.votes);
 
    const numVotes = mostVoted[0].votes;
+   $.each(data[questionId].respuestas, function(index, item) {
+     let value = 100 * getVote(questionText, item) / numVotes;
+     $(progressBars[index]).progressbar({value: value});
+     $(progressLabels[index]).text(getVote(questionText, item) + ' votos')
+
+   })
    const winners = mostVoted.filter(item => item.votes == numVotes);
 
-   showRanking(questionId, winners);
-   console.log(answerCounter, "most voted: ", winners);
+   // showRanking(questionId, winners);
+   // console.log(answerCounter, "most voted: ", winners);
  }
  options.find('label input:checked').prop('checked', false);
 })
 
-function showRanking(question, winners) {
-  let message = `<p class="title"> MÁS VOTADAS:</p>`;
-  $('#results' + question).html(message);
-  $.each(winners, function(index, item) {
-    let winner = `<p><span class="bold">Rta:</span> ${item.answer}. <span class="bold">Votos:</span> ${item.votes}</p>`;
-    $('#results' + question).append(winner);
-  })
-}
+// function showRanking(question, winners) {
+//   let message = `<p class="title"> MÁS VOTADAS:</p>`;
+//   $('#results' + question).html(message);
+//   $.each(winners, function(index, item) {
+//     let winner = `<p><span class="bold">Rta:</span> ${item.answer}. <span class="bold">Votos:</span> ${item.votes}</p>`;
+//     $('#results' + question).append(winner);
+//   })
+// }
 
 $('#addQuestion').on('click', function(event) {
   event.preventDefault();
